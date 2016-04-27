@@ -1,0 +1,36 @@
+#!/usr/bin/env ruby
+require 'date'
+
+def git_summary(date)
+  after = date
+  before = after.next_day
+
+  output = `git shortlog --before=#{before.to_time.to_i} --after=#{after.to_time.to_i}`
+end
+
+if ARGV.length <= 1
+  date = ARGV[0] ? Date.strptime(ARGV[0], '%Y-%m-%d') : Date.today
+
+  output = git_summary(date)
+  puts output
+else
+  start_date = Date.strptime(ARGV[0], '%Y-%m-%d')
+  end_date = Date.strptime(ARGV[1], '%Y-%m-%d')
+
+  date = start_date
+  while date <= end_date do
+    puts "################################################################"
+    puts
+    puts "Date: #{date.strftime('%Y-%m-%d')}"
+    puts
+
+    output = git_summary(date)
+    puts output
+
+    puts
+    puts "################################################################"
+
+    date = date.next_day
+  end
+
+end
